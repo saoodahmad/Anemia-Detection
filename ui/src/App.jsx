@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 
+import { BACKEND_URL } from "./config";
+
 const AnemiaPrediction = () => {
   const [images, setImages] = useState({
     conjunctiva: { url: null, file: "" },
@@ -11,6 +13,10 @@ const AnemiaPrediction = () => {
   const [result, setResult] = useState("");
 
   const [resultVisible, setResultVisible] = useState(false);
+
+  const [disableUpload, setDisableUpload] = useState(false);
+
+  const [disableBtn, setDisableBtn] = useState(true);
 
   const handleImageChange = (event, part) => {
     const file = event.target.files[0];
@@ -25,10 +31,9 @@ const AnemiaPrediction = () => {
     }
   };
 
-  const [disableBtn, setDisableBtn] = useState(true);
-
   const showResult = async () => {
     setDisableBtn(true);
+    setDisableUpload(true);
 
     const formData = new FormData();
 
@@ -44,7 +49,7 @@ const AnemiaPrediction = () => {
       formData.append("nail", images.nail.file);
     }
 
-    const result = await axios.post("http://127.0.0.1:5000/predict", formData);
+    const result = await axios.post(`${BACKEND_URL}/predict`, formData);
 
     setResult(result.data.prediction);
     setResultVisible(true);
@@ -59,6 +64,7 @@ const AnemiaPrediction = () => {
     });
     setDisableBtn(true);
     setResultVisible(false);
+    setDisableUpload(false);
   };
 
   return (
@@ -77,8 +83,11 @@ const AnemiaPrediction = () => {
                 type="file"
                 accept="image/*"
                 onChange={(e) => handleImageChange(e, "conjunctiva")}
+                disabled={disableUpload}
               />
-              <div className="overlay-text">Upload Image</div>
+              <div className="overlay-text">
+                {resultVisible ? "None" : "Upload Image"}
+              </div>
             </div>
             {images.conjunctiva.url && (
               <img src={images.conjunctiva.url} alt="Uploaded Image" />
@@ -96,8 +105,11 @@ const AnemiaPrediction = () => {
                 type="file"
                 accept="image/*"
                 onChange={(e) => handleImageChange(e, "palm")}
+                disabled={disableUpload}
               />
-              <div className="overlay-text">Upload Image</div>
+              <div className="overlay-text">
+                {resultVisible ? "None" : "Upload Image"}
+              </div>
             </div>
             {images.palm.url && (
               <img src={images.palm.url} alt="Uploaded Image" />
@@ -115,8 +127,11 @@ const AnemiaPrediction = () => {
                 type="file"
                 accept="image/*"
                 onChange={(e) => handleImageChange(e, "nail")}
+                disabled={disableUpload}
               />
-              <div className="overlay-text">Upload Image</div>
+              <div className="overlay-text">
+                {resultVisible ? "None" : "Upload Image"}
+              </div>
             </div>
             {images.nail.url && (
               <img src={images.nail.url} alt="Uploaded Image" />
