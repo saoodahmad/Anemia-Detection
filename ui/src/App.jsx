@@ -32,8 +32,8 @@ const AnemiaPrediction = () => {
   };
 
   const showResult = async () => {
-    setDisableBtn(true);
     setDisableUpload(true);
+    setDisableBtn(true);
 
     const formData = new FormData();
 
@@ -69,8 +69,10 @@ const AnemiaPrediction = () => {
 
   return (
     <div>
-      <h1>Anemia Prediction using Deep Learning</h1>
-
+      <div className="heading-container">
+        <img src="/icon.png" width="34px" height="34px" />
+        <h1>Anemia Prediction using Deep Learning</h1>
+      </div>
       <div className="container">
         <div className="card">
           <div className="card-title">Conjunctiva</div>
@@ -151,12 +153,13 @@ const AnemiaPrediction = () => {
       </div>
 
       <div
-        className={
-          resultVisible ? "result-container active" : "result-container"
-        }
+        // className={
+        //   resultVisible ? "result-container active" : "result-container"
+        // }
+        className="result-container"
       >
         <h2>Result:</h2>
-        <p>Patient is {result}</p>
+        {<p>{resultVisible && `Patient is ${result}`}</p>}
       </div>
     </div>
   );
