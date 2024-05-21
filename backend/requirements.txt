@@ -6,3 +6,4 @@ flask_cors
 scikit-learn==1.4.1.post1
 mongoengine
 pyjwt
+dill

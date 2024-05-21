@@ -82,6 +82,16 @@ const HistoryPredictionTable = () => {
           ))}
         </tbody>
       </table>
+
+      <button
+          type="submit"
+          className="history-button"
+          onClick={() => {
+            navigate("/");
+          }}
+        >
+          Predict
+        </button>
     </div>
   );
 };
