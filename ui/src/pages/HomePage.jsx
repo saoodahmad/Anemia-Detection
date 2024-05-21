@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 import { BACKEND_URL } from "../config";
-
 import "../index.css";
-import { useNavigate } from "react-router-dom";
 
 const HomePage = () => {
   const navigate = useNavigate();

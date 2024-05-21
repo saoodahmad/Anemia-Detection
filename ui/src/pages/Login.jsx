@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
-
 import axios from "axios";
-
-import "../index.css";
 import { useNavigate } from "react-router-dom";
+
 import { BACKEND_URL } from "../config";
+import "../index.css";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -14,6 +13,14 @@ const Login = () => {
   const [disableBtn, setDisableBtn] = useState(false);
 
   const handleLogin = async () => {
+
+    if(email == '' || password == '') {
+      alert("Please enter your details");
+
+      setDisableBtn(false);
+      return;
+    }
+
     const { data } = await axios.post(`${BACKEND_URL}/login`, {
       email,
       password,
@@ -22,7 +29,7 @@ const Login = () => {
     if (!data.success) {
       alert(data.message);
 
-      setDisableBtn(true);
+      setDisableBtn(false);
       return;
     }
 
@@ -30,7 +37,7 @@ const Login = () => {
       sessionStorage.setItem("token", data.token);
     }
 
-    setDisableBtn(true);
+    setDisableBtn(false);
 
     navigate("/");
   };
@@ -45,6 +52,7 @@ const Login = () => {
 
   return (
     <div className="auth-container">
+       <img src="/icon.png" width="34px" height="34px" />
       <h1>Login</h1>
       <form className="auth-form">
         <label htmlFor="username">Email:</label>

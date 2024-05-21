@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import "../index.css";
 import { useNavigate } from "react-router-dom";
+
 import { BACKEND_URL } from "../config";
+import "../index.css";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -15,6 +16,8 @@ const SignUp = () => {
   const handleSignUp = async () => {
     if (password === confirmPassword) {
       alert("Passwords do not match");
+
+      setDisableBtn(false);
       return;
     }
 
@@ -25,7 +28,7 @@ const SignUp = () => {
 
     if (!data.success) {
       alert(data.message);
-      setDisableBtn(true);
+      setDisableBtn(false);
       return;
     }
 
@@ -33,7 +36,7 @@ const SignUp = () => {
       sessionStorage.setItem("token", data.token);
     }
 
-    setDisableBtn(true);
+    setDisableBtn(false);
 
     navigate("/");
   };
@@ -48,6 +51,7 @@ const SignUp = () => {
 
   return (
     <div className="auth-container">
+      <img src="/icon.png" width="34px" height="34px" />
       <h1>Sign Up</h1>
       <form className="auth-form">
         <label htmlFor="username">Email:</label>

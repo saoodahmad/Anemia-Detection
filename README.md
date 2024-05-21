@@ -2,9 +2,13 @@
 
 ## Prerequisite
 
-Python 3.10.12
+- Install Python 3.10.12
 
-Node 20.11.0
+- Install Node 20.11.0
+
+- Install libgl1 on Ubuntu using apt-get
+
+- Unzip images.zip to get the images required for prediction
 
 ## Project Setup
 

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import "../index.css";
-import { BACKEND_URL } from "../config";
 import { useNavigate } from "react-router-dom";
+
+import { BACKEND_URL } from "../config";
+import "../index.css";
 
 const HistoryPredictionTable = () => {
   const navigate = useNavigate();
@@ -32,8 +33,8 @@ const HistoryPredictionTable = () => {
   }, []);
   return (
     <div className="history-table-container">
+       <img src="/icon.png" width="34px" height="34px" />
       <h1>Prediction History</h1>
-
       <table className="history-table">
         <thead>
           <tr>
