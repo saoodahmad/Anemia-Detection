@@ -1,1 +1,1 @@
-export const BACKEND_URL = "https://stunning-fishstick-g7r45xq5g49fv7xj-5000.app.github.dev";
+export const BACKEND_URL = "http://localhost:5000";
