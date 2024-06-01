@@ -1,9 +1,0 @@
-tensorflow==2.15.0
-flask
-joblib
-opencv-python
-flask_cors
-scikit-learn==1.4.1.post1
-mongoengine
-pyjwt
-dill

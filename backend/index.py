@@ -30,6 +30,7 @@ class PredictionHistory(Document):
     nailImg = StringField(required=True)
     conjunctivaImg = StringField(required=True)
     prediction =  StringField(required=True)
+    predictedBy = EmailField(required=True)
 
 
 classes = ['Anemic', 'Non Anemic']
@@ -150,9 +151,6 @@ def predict(current_user):
         conjunctiva_b64 = None
         palm_b64 = None
         nail_b64 = None
-        # conjunctiva_buf = None
-        # palm_buf = None
-        # nail_buf = None
 
         for field_name, file in files:
             if field_name == 'conjunctiva' and file.filename != '':
@@ -182,17 +180,13 @@ def predict(current_user):
         prediction = int(mode(prediction_np).mode)
         prediction_class = classes[prediction]
        
-        # print(f"data:{palm_b64}")
-        # print(f"data:${nail_b64}")
-        # print(f"data:${conjunctiva_b64}")
-    
-    
         history = PredictionHistory(
-            patientUUID=patientUUID, 
-            palmImg=palm_b64 if palm_b64 is not None else "",
+            patientUUID = patientUUID, 
+            palmImg = palm_b64 if palm_b64 is not None else "",
             nailImg = nail_b64 if nail_b64 is not None else "",
             conjunctivaImg = conjunctiva_b64 if conjunctiva_b64 is not None else "",
             prediction = prediction_class, 
+            predictedBy = current_user.email
         )
 
         history.save()
@@ -206,7 +200,7 @@ def predict(current_user):
 @token_required
 def get_history(current_user):    
     try:
-        history_records = PredictionHistory.objects()
+        history_records = PredictionHistory.objects(predictedBy=current_user.email)
         history_list = []
         for record in history_records:
             history_list.append({
@@ -214,7 +208,7 @@ def get_history(current_user):
                 'palmImg': record.palmImg,
                 'nailImg': record.nailImg,
                 'conjunctivaImg': record.conjunctivaImg,
-                'prediction': record.prediction
+                'prediction': record.prediction,
             })
 
         return jsonify({'success': True, 'history': history_list}), 200

@@ -1,1 +1,1 @@
-export const BACKEND_URL = "https://ominous-memory-g7r45xq7xvpcv994-5000.app.github.dev";
+export const BACKEND_URL = "http://127.0.0.1:5000";
