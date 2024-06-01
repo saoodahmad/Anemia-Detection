@@ -185,4 +185,4 @@ dist-ssr
 *.sln
 *.sw?
 
-sample_images/
+images/
