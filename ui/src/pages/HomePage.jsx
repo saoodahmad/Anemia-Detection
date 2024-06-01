@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import {  message } from 'antd';
 
 import { BACKEND_URL } from "../config";
 import "../index.css";
 
 const HomePage = () => {
   const navigate = useNavigate();
+
+  const [messageApi, contextHolder] = message.useMessage({});
 
   const [patientUUID, setPatientUUID] = useState("");
 
@@ -38,36 +41,51 @@ const HomePage = () => {
   };
 
   const showResult = async () => {
-    const token = sessionStorage.getItem("token");
+    try {
 
-    setDisableUpload(true);
-    setDisableBtn(true);
+      if(patientUUID == '') {
+        messageApi.error("Please enter patient UUID!")
+        return 
+      }
 
-    const formData = new FormData();
+      messageApi.info("Please wait!")
 
-    if (images.conjunctiva) {
-      formData.append("conjunctiva", images.conjunctiva.file);
+      const token = localStorage.getItem("token");
+
+      setDisableUpload(true);
+      setDisableBtn(true);
+  
+      const formData = new FormData();
+  
+      if (images.conjunctiva) {
+        formData.append("conjunctiva", images.conjunctiva.file);
+      }
+  
+      if (images.palm) {
+        formData.append("palm", images.palm.file);
+      }
+  
+      if (images.nail) {
+        formData.append("nail", images.nail.file);
+      }
+  
+      formData.append("patientUUID", patientUUID);
+  
+      const result = await axios.post(`${BACKEND_URL}/predict`, formData, {
+        headers: {
+          "x-access-token": token,
+        },
+      });
+  
+      messageApi.success('Predicted successfully!')
+
+      setResult(result.data.prediction);
+      setResultVisible(true);
+      setDisableBtn(false);
+    } catch(err) {
+      messageApi.error(err.response.data.message)
     }
-
-    if (images.palm) {
-      formData.append("palm", images.palm.file);
-    }
-
-    if (images.nail) {
-      formData.append("nail", images.nail.file);
-    }
-
-    formData.append("patientUUID", patientUUID);
-
-    const result = await axios.post(`${BACKEND_URL}/predict`, formData, {
-      headers: {
-        "x-access-token": token,
-      },
-    });
-
-    setResult(result.data.prediction);
-    setResultVisible(true);
-    setDisableBtn(false);
+    
   };
 
   const clearData = () => {
@@ -79,6 +97,9 @@ const HomePage = () => {
     setDisableBtn(true);
     setResultVisible(false);
     setDisableUpload(false);
+
+    messageApi.success('Cleared successfully!')
+
   };
 
   const goToHistory = () => {
@@ -86,15 +107,17 @@ const HomePage = () => {
   };
 
   useEffect(() => {
-    const token = sessionStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
     if (!token) {
       navigate("/login");
+      return 
     }
   }, []);
 
   return (
-    <div>
+    <>
+      {contextHolder}
       <div className="heading-container">
         <img src="/icon.png" width="34px" height="34px" />
         <h1>Anemia Prediction using Deep Learning</h1>
@@ -198,7 +221,7 @@ const HomePage = () => {
         <h2>Result:</h2>
         {<p>{resultVisible && `Patient is ${result}`}</p>}
       </div>
-    </div>
+    </>
   );
 };
 

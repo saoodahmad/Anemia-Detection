@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import {  message } from 'antd';
 
 import { BACKEND_URL } from "../config";
 import "../index.css";
@@ -8,30 +9,42 @@ import "../index.css";
 const HistoryPredictionTable = () => {
   const navigate = useNavigate();
 
+  const [messageApi, contextHolder] = message.useMessage({});
+
   const [predictionHistory, setPredictionHistory] = useState([]);
 
   useEffect(() => {
-    const token = sessionStorage.getItem("token");
+    try { 
+      const token = localStorage.getItem("token");
 
-    if (!token) {
-      navigate("/");
-    }
-
-    const fetch = async () => {
-      const result = await axios.get(`${BACKEND_URL}/history`, {
-        headers: {
-          "x-access-token": token,
-        },
-      });
-
-      if (result.data.success) {
-        setPredictionHistory(result.data.history);
+      if (!token) {
+        navigate("/");
       }
-    };
+  
+      messageApi.info('Please wait!')
+  
+      const fetch = async () => {
+        const result = await axios.get(`${BACKEND_URL}/history`, {
+          headers: {
+            "x-access-token": token,
+          },
+        });
+  
+        
+        setPredictionHistory(result.data.history);
+        
+      };
+  
+      fetch();
 
-    fetch();
+    }catch(err) {
+      messageApi.error(err.response.data.message)
+    }
   }, []);
+
   return (
+    <>
+    {contextHolder}
     <div className="history-table-container">
        <img src="/icon.png" width="34px" height="34px" />
       <h1>Prediction History</h1>
@@ -94,6 +107,7 @@ const HistoryPredictionTable = () => {
           Predict
         </button>
     </div>
+    </>
   );
 };
 

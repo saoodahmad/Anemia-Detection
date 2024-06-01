@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import {  message } from 'antd';
 
 import { BACKEND_URL } from "../config";
 import "../index.css";
@@ -8,41 +9,57 @@ import "../index.css";
 const SignUp = () => {
   const navigate = useNavigate();
 
+  const [messageApi, contextHolder] = message.useMessage({});
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [disableBtn, setDisableBtn] = useState(false);
 
   const handleSignUp = async () => {
-    if (password === confirmPassword) {
-      alert("Passwords do not match");
+
+    try {
+
+      if(email == '' || password == '' || confirmPassword == '') {
+        messageApi.error("Please enter your details")
+        setDisableBtn(false);
+        return;
+      }
+  
+      if (password != confirmPassword) {
+        messageApi.error("Passwords do not match")
+        setDisableBtn(false);
+        return;
+      }
+  
+      messageApi.info('Please wait!')
+  
+      const { data } = await axios.post(`${BACKEND_URL}/signup`, {
+        email,
+        password,
+      });
+    
+      if (data.token) {
+        sessionStorage.setItem("token", data.token);
+      }
+  
+      setDisableBtn(false);
+  
+      messageApi.success("Signup success!")
+  
+      setTimeout(() => {
+        navigate("/");
+      }, 1000)
+    } catch (err) {
+      messageApi.error(err.response.data.message)
 
       setDisableBtn(false);
-      return;
     }
-
-    const { data } = await axios.post(`${BACKEND_URL}/signup`, {
-      email,
-      password,
-    });
-
-    if (!data.success) {
-      alert(data.message);
-      setDisableBtn(false);
-      return;
-    }
-
-    if (data.token) {
-      sessionStorage.setItem("token", data.token);
-    }
-
-    setDisableBtn(false);
-
-    navigate("/");
+    
   };
 
   useEffect(() => {
-    const token = sessionStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
     if (token) {
       navigate("/");
@@ -50,6 +67,8 @@ const SignUp = () => {
   }, []);
 
   return (
+    <>
+    {contextHolder}
     <div className="auth-container">
       <img src="/icon.png" width="34px" height="34px" />
       <h1>Sign Up</h1>
@@ -116,6 +135,7 @@ const SignUp = () => {
         </button>
       </form>
     </div>
+    </>
   );
 };
 

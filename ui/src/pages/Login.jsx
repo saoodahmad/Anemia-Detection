@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import {  message } from 'antd';
 
 import { BACKEND_URL } from "../config";
 import "../index.css";
@@ -8,42 +9,47 @@ import "../index.css";
 const Login = () => {
   const navigate = useNavigate();
 
+  const [messageApi, contextHolder] = message.useMessage({});
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [disableBtn, setDisableBtn] = useState(false);
 
   const handleLogin = async () => {
+    try {
+      if(email == '' || password == '') {
+        messageApi.error("Please enter you details")
+        setDisableBtn(false);
+        return;
+      }
 
-    if(email == '' || password == '') {
-      alert("Please enter your details");
+      messageApi.info("Please wait!")
+
+      const { data } = await axios.post(`${BACKEND_URL}/login`, {
+        email,
+        password,
+      });
+
+      if (data.token) {
+        sessionStorage.setItem("token", data.token);
+      }
 
       setDisableBtn(false);
-      return;
-    }
 
-    const { data } = await axios.post(`${BACKEND_URL}/login`, {
-      email,
-      password,
-    });
+      messageApi.success("Login success!")
 
-    if (!data.success) {
-      alert(data.message);
+      setTimeout(() => {
+        navigate("/");
+      }, 1000)
 
+    }catch(err) {
+      messageApi.error(err.response.data.message)
       setDisableBtn(false);
-      return;
     }
-
-    if (data.token) {
-      sessionStorage.setItem("token", data.token);
-    }
-
-    setDisableBtn(false);
-
-    navigate("/");
-  };
+  }
 
   useEffect(() => {
-    const token = sessionStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
     if (token) {
       navigate("/");
@@ -51,6 +57,8 @@ const Login = () => {
   }, []);
 
   return (
+    <>
+    {contextHolder}
     <div className="auth-container">
        <img src="/icon.png" width="34px" height="34px" />
       <h1>Login</h1>
@@ -105,6 +113,7 @@ const Login = () => {
         </button>
       </form>
     </div>
+    </>
   );
 };
 
