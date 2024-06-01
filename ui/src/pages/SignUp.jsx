@@ -38,7 +38,7 @@ const SignUp = () => {
       });
 
       if (data.token) {
-        localStorage.setItem("token", data.token);
+        sessionStorage.setItem("token", data.token);
       }
 
       setDisableBtn(false);
@@ -56,7 +56,7 @@ const SignUp = () => {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
 
     if (token) {
       navigate("/");

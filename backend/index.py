@@ -5,7 +5,7 @@ import numpy as np
 import cv2
 from scipy.stats import mode
 from flask_cors import CORS
-from mongoengine import connect, Document, StringField, EmailField
+from mongoengine import connect, Document, StringField, EmailField, DateTimeField
 import hashlib
 import jwt
 from datetime import datetime, timedelta
@@ -31,6 +31,7 @@ class PredictionHistory(Document):
     conjunctivaImg = StringField(required=True)
     prediction =  StringField(required=True)
     predictedBy = EmailField(required=True)
+    createdAt = DateTimeField(default=datetime.utcnow)
 
 
 classes = ['Anemic', 'Non Anemic']
@@ -200,7 +201,7 @@ def predict(current_user):
 @token_required
 def get_history(current_user):    
     try:
-        history_records = PredictionHistory.objects(predictedBy=current_user.email)
+        history_records = PredictionHistory.objects(predictedBy=current_user.email).order_by('-createdAt')
         history_list = []
         for record in history_records:
             history_list.append({

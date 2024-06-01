@@ -50,7 +50,7 @@ const HomePage = () => {
 
       messageApi.info("Please wait!")
 
-      const token = localStorage.getItem("token");
+      const token = sessionStorage.getItem("token");
 
       setDisableUpload(true);
       setDisableBtn(true);
@@ -107,7 +107,7 @@ const HomePage = () => {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
 
     if (!token) {
       navigate("/login");
